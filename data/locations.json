@@ -1,1 +1,289 @@
-[{"name":"Narni (Terni)","province":"Terni","region":"Umbria","type":"long_stay","description":"Initial long stay base covering high-interest Terni and Viterbo housing stock."},{"name":"Gaeta (Latina)","province":"Latina","region":"Lazio","type":"short_stay","description":"Coastal short stay to scout southern Latina."},{"name":"Manciano (Grosseto)","province":"Grosseto","region":"Tuscany","type":"long_stay","description":"Primary long stay in southern Tuscany."},{"name":"Teramo","province":"Teramo","region":"Abruzzo","type":"short_stay","description":"Short stay to scout the Adriatic slopes of Abruzzo."},{"name":"Castiglione del Lago (Umbria)","province":"Perugia","region":"Umbria","type":"long_stay","description":"Strategic long stay around Lake Trasimeno, covering eastern Tuscany and Umbria."},{"name":"Macerata","province":"Macerata","region":"Marche","type":"short_stay","description":"Short stay to scout central Marche."},{"name":"Vacation Rest Week","province":"Viterbo","region":"Lazio","type":"vacation_site","description":"Dedicated family rest week - no active house hunting."},{"name":"Alba","province":"Asti","region":"Piemonte","type":"short_stay","description":"Short stay to scout northern Piemonte and Asti."},{"name":"Milan","province":"Milan","region":"Piemonte","type":"non_hunting_city","description":"Transit stay before international flight out of Milan Malpensa."},{"name":"Spoleto","province":"Perugia","region":"Umbria","type":"long_stay","description":"Final long stay base in Umbria."},{"name":"Rome FCO Airport","province":"Rome","region":"Lazio","type":"airport","description":"Rome Fiumicino Airport - Arrival & Car Rental Pickup."},{"name":"Florence Airport (FLR)","province":"Florence","region":"Tuscany","type":"airport","description":"Florence Airport - Car Swap Hub."},{"name":"Milan Malpensa (MXP)","province":"Varese","region":"Lombardy","type":"airport","description":"Milan Malpensa Airport - Departure Hub."},{"name":"Turin (TRN)","province":"Turin","region":"Piemonte","type":"airport","description":"Turin Airport - Car Swap Hub."},{"name":"Milan Linate (LIN)","province":"Milan","region":"Lombardy","type":"airport","description":"Milan Linate Airport - Transit Hub."},{"name":"Todi","province":"Perugia","region":"Umbria","type":"long_stay","description":"High-interest hill town in Umbria."},{"name":"Cortona Countryside","province":"Siena","region":"Tuscany","type":"long_stay","description":"Countryside surrounding Cortona."},{"name":"Panicale","province":"Perugia","region":"Umbria","type":"short_stay","description":"Charming hilltop village near Lake Trasimeno."},{"name":"Montepulciano","province":"Siena","region":"Tuscany","type":"short_stay","description":"Charming hilltop town in Tuscany."},{"name":"Capalbio","province":"Grosseto","region":"Tuscany","type":"short_stay","description":"Premium hilltop town near southern Tuscan coast."},{"name":"Saturnia","province":"Grosseto","region":"Tuscany","type":"short_stay","description":"Countryside famous for natural thermal hot springs."},{"name":"Pitigliano","province":"Grosseto","region":"Tuscany","type":"short_stay","description":"Dramatic tufa-rock town in southern Tuscany."},{"name":"Scansano","province":"Grosseto","region":"Tuscany","type":"short_stay","description":"Wine region in southern Tuscany."},{"name":"Sovana","province":"Grosseto","region":"Tuscany","type":"short_stay","description":"Ancient tufa village in southern Tuscany."},{"name":"Sutri (Viterbo)","province":"Viterbo","region":"Lazio","type":"long_stay","description":"Ancient Etruscan town in southern Viterbo."},{"name":"Orvieto","province":"Terni","region":"Umbria","type":"long_stay","description":"Stunning cliffside cathedral city in Terni."}]
+[
+  {
+    "name": "Narni (Terni)",
+    "province": "Terni",
+    "region": "Umbria",
+    "type": "long_stay",
+    "description": "Initial long stay base covering high-interest Terni and Viterbo housing stock."
+  },
+  {
+    "name": "Gaeta (Latina)",
+    "province": "Latina",
+    "region": "Lazio",
+    "type": "short_stay",
+    "description": "Coastal short stay to scout southern Latina."
+  },
+  {
+    "name": "Manciano (Grosseto)",
+    "province": "Grosseto",
+    "region": "Tuscany",
+    "type": "long_stay",
+    "description": "Primary long stay in southern Tuscany."
+  },
+  {
+    "name": "Teramo",
+    "province": "Teramo",
+    "region": "Abruzzo",
+    "type": "short_stay",
+    "description": "Short stay to scout the Adriatic slopes of Abruzzo."
+  },
+  {
+    "name": "Castiglione del Lago (Umbria)",
+    "province": "Perugia",
+    "region": "Umbria",
+    "type": "long_stay",
+    "description": "Strategic long stay around Lake Trasimeno, covering eastern Tuscany and Umbria."
+  },
+  {
+    "name": "Macerata",
+    "province": "Macerata",
+    "region": "Marche",
+    "type": "short_stay",
+    "description": "Short stay to scout central Marche."
+  },
+  {
+    "name": "Vacation Rest Week",
+    "province": "Viterbo",
+    "region": "Lazio",
+    "type": "vacation_site",
+    "description": "Dedicated family rest week - no active house hunting."
+  },
+  {
+    "name": "Alba",
+    "province": "Asti",
+    "region": "Piemonte",
+    "type": "short_stay",
+    "description": "Short stay to scout northern Piemonte and Asti."
+  },
+  {
+    "name": "Milan",
+    "province": "Milan",
+    "region": "Piemonte",
+    "type": "non_hunting_city",
+    "description": "Transit stay before international flight out of Milan Malpensa."
+  },
+  {
+    "name": "Spoleto",
+    "province": "Perugia",
+    "region": "Umbria",
+    "type": "long_stay",
+    "description": "Final long stay base in Umbria."
+  },
+  {
+    "name": "Rome FCO Airport",
+    "province": "Rome",
+    "region": "Lazio",
+    "type": "airport",
+    "description": "Rome Fiumicino Airport - Arrival & Car Rental Pickup."
+  },
+  {
+    "name": "Florence Airport (FLR)",
+    "province": "Florence",
+    "region": "Tuscany",
+    "type": "airport",
+    "description": "Florence Airport - Car Swap Hub."
+  },
+  {
+    "name": "Milan Malpensa (MXP)",
+    "province": "Varese",
+    "region": "Lombardy",
+    "type": "airport",
+    "description": "Milan Malpensa Airport - Departure Hub."
+  },
+  {
+    "name": "Turin (TRN)",
+    "province": "Turin",
+    "region": "Piemonte",
+    "type": "airport",
+    "description": "Turin Airport - Car Swap Hub."
+  },
+  {
+    "name": "Milan Linate (LIN)",
+    "province": "Milan",
+    "region": "Lombardy",
+    "type": "airport",
+    "description": "Milan Linate Airport - Transit Hub."
+  },
+  {
+    "name": "Todi",
+    "province": "Perugia",
+    "region": "Umbria",
+    "type": "long_stay",
+    "description": "High-interest hill town in Umbria."
+  },
+  {
+    "name": "Cortona Countryside",
+    "province": "Siena",
+    "region": "Tuscany",
+    "type": "long_stay",
+    "description": "Countryside surrounding Cortona."
+  },
+  {
+    "name": "Panicale",
+    "province": "Perugia",
+    "region": "Umbria",
+    "type": "short_stay",
+    "description": "Charming hilltop village near Lake Trasimeno."
+  },
+  {
+    "name": "Montepulciano",
+    "province": "Siena",
+    "region": "Tuscany",
+    "type": "short_stay",
+    "description": "Charming hilltop town in Tuscany."
+  },
+  {
+    "name": "Capalbio",
+    "province": "Grosseto",
+    "region": "Tuscany",
+    "type": "short_stay",
+    "description": "Premium hilltop town near southern Tuscan coast."
+  },
+  {
+    "name": "Saturnia",
+    "province": "Grosseto",
+    "region": "Tuscany",
+    "type": "short_stay",
+    "description": "Countryside famous for natural thermal hot springs."
+  },
+  {
+    "name": "Pitigliano",
+    "province": "Grosseto",
+    "region": "Tuscany",
+    "type": "short_stay",
+    "description": "Dramatic tufa-rock town in southern Tuscany."
+  },
+  {
+    "name": "Scansano",
+    "province": "Grosseto",
+    "region": "Tuscany",
+    "type": "short_stay",
+    "description": "Wine region in southern Tuscany."
+  },
+  {
+    "name": "Sovana",
+    "province": "Grosseto",
+    "region": "Tuscany",
+    "type": "short_stay",
+    "description": "Ancient tufa village in southern Tuscany."
+  },
+  {
+    "name": "Sutri (Viterbo)",
+    "province": "Viterbo",
+    "region": "Lazio",
+    "type": "long_stay",
+    "description": "Ancient Etruscan town in southern Viterbo."
+  },
+  {
+    "name": "Orvieto",
+    "province": "Terni",
+    "region": "Umbria",
+    "type": "long_stay",
+    "description": "Stunning cliffside cathedral city in Terni."
+  },
+    {
+    "name": "Panicale (Perugia)",
+    "province": "Perugia",
+    "region": "Umbria",todi
+    "type": "short_stay",
+    "description": "Tier 1 base, paired with Castiglione del Lago. Beautifully preserved hill town above Lago Trasimeno with strong pool-villa inventory and access to the full Trasimeno expat network."
+  },
+  {
+    "name": "La Morra (Cuneo)",
+    "province": "Cuneo",
+    "region": "Piemonte",
+    "type": "short_stay",
+    "description": "Tier 1 Piedmont base, paired with Alba. Hill village at the heart of Barolo country with wide vineyard views and strong pool-villa inventory. Best landscape position in the Langhe."
+  },
+  {
+    "name": "Ascoli Piceno",
+    "province": "Ascoli Piceno",
+    "region": "Marche",
+    "type": "short_stay",
+    "description": "Tier 2 base. Strongest expat community in Marche (300-500 full-time). Spectacular travertine city, excellent food culture. Detractor: awkward airport access and relative isolation from the broader central Italy circuit."
+  },
+  {
+    "name": "Fermo",
+    "province": "Fermo",
+    "region": "Marche",
+    "type": "short_stay",
+    "description": "Tier 2 base, paired with Ascoli Piceno. Beautiful hill town with Roman cistern and art museum. Good pool-villa inventory in surrounding hills with proximity to both the Adriatic coast and southern Sibillini."
+  },
+  {
+    "name": "Spello (Perugia)",
+    "province": "Perugia",
+    "region": "Umbria",
+    "type": "short_stay",
+    "description": "Tier 3. Arguably Umbria's most beautiful small hill town. Near-zero in-town anglophone expat community. Excellent day-trip position in the Valle Umbra. Better visited from a Todi or Trasimeno base than used as a primary base."
+  },
+  {
+    "name": "Bevagna (Perugia)",
+    "province": "Perugia",
+    "region": "Umbria",
+    "type": "short_stay",
+    "description": "Tier 3. Nearly untouched Roman-grid town. Pairs naturally with Spello as a day trip. No meaningful expat community or pool-villa rental market within town; countryside properties put you in the Todi catchment."
+  },
+  {
+    "name": "Cingoli (Macerata)",
+    "province": "Macerata",
+    "region": "Marche",
+    "type": "short_stay",
+    "description": "Tier 3. Known as the balcony of the Marche for panoramic views. Decent pool-villa inventory in surrounding hills. Thin, diffuse expat community. Better as a countryside stay than a named-town base."
+  },
+  {
+    "name": "Urbino",
+    "province": "Pesaro-Urbino",
+    "region": "Marche",
+    "type": "short_stay",
+    "description": "Tier 3. UNESCO Renaissance city and Raphael's birthplace. Thin anglophone expat community skewing academic. Montefeltro hills less cinematic than Macerata or Ascoli interior. Better as a day trip from an Ascoli/Fermo base."
+  },
+  {
+    "name": "Bagnoregio (Viterbo)",
+    "province": "Viterbo",
+    "region": "Lazio",
+    "type": "short_stay",
+    "description": "Tier 3. Gateway to Civita di Bagnoregio, one of Italy's most photographed villages. Day-trip only for Civita itself (11 permanent residents). Modest rental inventory in Bagnoregio proper."
+  },
+  {
+    "name": "Tuscania (Viterbo)",
+    "province": "Viterbo",
+    "region": "Lazio",
+    "type": "short_stay",
+    "description": "Tier 3. Heart of Etruscan civilization with necropolises and tufa-carved roads. Good pool-villa inventory in surrounding countryside. Too far from Umbria to use as an Umbrian base; best as a day trip from Bolsena or Rome."
+  },
+  {
+    "name": "Tarquinia (Viterbo)",
+    "province": "Viterbo",
+    "region": "Lazio",
+    "type": "short_stay",
+    "description": "Tier 3, paired with Tuscania. UNESCO Etruscan painted tombs. Best visited as a day trip from a Bolsena or Manciano base rather than used as a primary stay."
+  },
+  {
+    "name": "Sperlonga (Latina)",
+    "province": "Latina",
+    "region": "Lazio",
+    "type": "short_stay",
+    "description": "Tier 3. Stunning whitewashed coastal village above turquoise sea. Anglophone expat community essentially absent. Heavily crowded July-August. Correct for a one-week beach stay; wrong for extended base or building any social network."
+  },
+  {
+    "name": "Nizza Monferrato (Asti) ",
+    "province": "Asti",
+    "region": "Piemonte",
+    "type": "short_stay",
+    "description": "Tier 3. Monferrato wine country at lower prices than the Langhe. Thinner expat community and slightly less dramatic landscape than La Morra/Alba. Worth a day trip from the Langhe base; not a standalone primary destination."
+  },
+  {
+    "name": "Canelli (Asti)",
+    "province": "Asti",
+    "region": "Piemonte",
+    "type": "short_stay",
+    "description": "Tier 3, paired with Nizza Monferrato. Moscato and Barbera wine country in the UNESCO Monferrato zone. Emerging pool-villa inventory. Genuinely off the tourist track. Better as a day trip from Alba than a primary base."
+  },
+  {
+    "name": "Saluzzo (Cuneo)",
+    "province": "Cuneo",
+    "region": "Piemonte",
+    "type": "short_stay",
+    "description": "Tier 3. Beautiful and almost entirely unknown Renaissance hill town facing Monviso. Anglophone expat community near zero. Underdeveloped rental market. Best for Alpine hiking or cycling; not the right base for food-and-wine tourism."
+  }  
+]

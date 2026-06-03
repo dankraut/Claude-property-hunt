@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Italy Property Hunt Planner</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  :root {
+    --stone-50:#fafaf9;--stone-100:#f5f5f4;--stone-200:#e7e5e4;
+    --stone-300:#d6d3d1;--stone-400:#a8a29e;--stone-500:#78716c;
+    --stone-600:#57534e;--stone-700:#44403c;--stone-800:#292524;--stone-900:#1c1917;
+    --terra:#b5533c;--terra-l:#d4705a;--terra-p:#f5e8e5;
+    --olive:#7a8c5a;--olive-p:#eef1e8;
+    --gold:#c9a84c;--gold-p:#faf4e5;
+    --shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08);
+    --shadow-md:0 4px 6px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Georgia',serif;background:var(--stone-100);color:var(--stone-800);min-height:100vh;}
+
+  /* Header */
+  header{background:var(--stone-800);color:var(--stone-100);padding:14px 24px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow-md);}
+  header .flag{font-size:26px;}
+  header h1{font-size:1.25rem;font-weight:normal;letter-spacing:.03em;}
+  header .subtitle{font-size:.75rem;color:var(--stone-400);font-family:sans-serif;margin-top:2px;}
+  .trip-badge{margin-left:auto;background:var(--terra);color:white;padding:4px 12px;border-radius:20px;font-family:sans-serif;font-size:.75rem;white-space:nowrap;}
+
+  /* Layout */
+  .app-body{display:flex;height:calc(100vh - 61px);overflow:hidden;}
+  .sidebar{width:272px;flex-shrink:0;background:white;border-right:1px solid var(--stone-200);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+  .main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+
+  /* Tabs */
+  .tabs{display:flex;background:white;border-bottom:1px solid var(--stone-200);padding:0 20px;}
+  .tab-btn{padding:11px 16px;cursor:pointer;border:none;background:none;font-family:sans-serif;font-size:.84rem;color:var(--stone-500);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+  .tab-btn:hover{color:var(--stone-800);}
+  .tab-btn.active{color:var(--terra);border-bottom-color:var(--terra);font-weight:600;}
+  .tab-panel{flex:1;overflow:auto;padding:18px;display:none;}
+  .tab-panel.active{display:block;}
+
+  /* Sidebar widgets */
+  .widget{border:1px solid var(--stone-200);border-radius:8px;overflow:hidden;}
+  .widget-header{background:var(--stone-100);padding:7px 12px;font-size:.7rem;font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--stone-500);border-bottom:1px solid var(--stone-200);}
+  .widget-body{padding:10px 12px;}
+  .trip-stat{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-family:sans-serif;font-size:.8rem;}
+  .trip-stat .lbl{color:var(--stone-500);}
+  .trip-stat .val{font-weight:600;color:var(--stone-800);}
+  .c-item{padding:7px 0;border-bottom:1px solid var(--stone-100);font-family:sans-serif;font-size:.77rem;}
+  .c-item:last-child{border-bottom:none;}
+  .c-date{font-weight:700;color:var(--terra);margin-bottom:2px;}
+  .c-loc{color:var(--stone-600);}
+  .c-desc{color:var(--stone-400);font-size:.71rem;margin-top:2px;}
+  .badge{display:inline-block;padding:2px 7px;border-radius:10px;font-family:sans-serif;font-size:.69rem;font-weight:600;}
+  .badge-long{background:var(--terra-p);color:var(--terra);}
+  .badge-short{background:var(--gold-p);color:#9a7a1a;}
+  .badge-rest{background:var(--olive-p);color:var(--olive);}
+
+  /* Properties tab */
+  .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding:12px;background:white;border-radius:8px;border:1px solid var(--stone-200);}
+  .filter-bar input,.filter-bar select{padding:6px 10px;border:1px solid var(--stone-300);border-radius:6px;font-family:sans-serif;font-size:.81rem;color:var(--stone-700);background:var(--stone-50);}
+  .filter-bar input{flex:1;min-width:160px;}
+  .results-count{margin-left:auto;font-family:sans-serif;font-size:.79rem;color:var(--stone-500);align-self:center;white-space:nowrap;}
+  .tbl-wrap{background:white;border-radius:8px;border:1px solid var(--stone-200);overflow:hidden;}
+  table{width:100%;border-collapse:collapse;font-family:sans-serif;font-size:.81rem;}
+  thead th{background:var(--stone-800);color:var(--stone-200);padding:8px 11px;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}
+  tbody tr{border-bottom:1px solid var(--stone-100);}
+  tbody tr:hover{background:var(--stone-50);}
+  tbody tr:last-child{border-bottom:none;}
+  td{padding:7px 11px;color:var(--stone-700);}
+  td.price{font-weight:600;color:var(--terra);}
+  td.town{font-weight:500;color:var(--stone-800);}
+  td.id-c{font-family:monospace;font-size:.7rem;color:var(--stone-400);}
+
+  /* Itinerary tab */
+  .itin-sel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .itin-btn{padding:7px 15px;border:2px solid var(--stone-300);border-radius:8px;cursor:pointer;background:white;font-family:sans-serif;font-size:.81rem;color:var(--stone-600);transition:all .15s;}
+  .itin-btn:hover{border-color:var(--terra);color:var(--terra);}
+  .itin-btn.active{border-color:var(--terra);background:var(--terra);color:white;}
+  .itin-meta{background:white;border:1px solid var(--stone-200);border-radius:8px;padding:13px 16px;margin-bottom:14px;font-family:sans-serif;}
+  .itin-meta h3{font-size:.93rem;color:var(--stone-800);margin-bottom:5px;}
+  .itin-meta p{font-size:.8rem;color:var(--stone-500);line-height:1.5;}
+  .itin-summary{background:var(--stone-800);color:white;border-radius:8px;padding:13px 18px;margin-bottom:14px;font-family:sans-serif;display:flex;gap:22px;flex-wrap:wrap;}
+  .itin-summary .stat{display:flex;flex-direction:column;gap:2px;}
+  .itin-summary .stat .n{font-size:1.35rem;font-weight:700;color:var(--gold);}
+  .itin-summary .stat .l{font-size:.7rem;color:var(--stone-400);text-transform:uppercase;letter-spacing:.06em;}
+  .bases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:10px;}
+  .base-card{background:white;border:1px solid var(--stone-200);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);}
+  .base-card.long-stay{border-top:3px solid var(--terra);}
+  .base-card.short-stay{border-top:3px solid var(--gold);}
+  .base-card.rest{border-top:3px solid var(--olive);}
+  .bc-header{padding:11px 13px 7px;display:flex;align-items:flex-start;justify-content:space-between;}
+  .bc-name{font-size:.88rem;font-weight:600;color:var(--stone-800);}
+  .bc-body{padding:4px 13px 11px;}
+  .bc-stat{font-family:sans-serif;font-size:.77rem;color:var(--stone-500);margin-top:4px;}
+  .bc-stat strong{color:var(--stone-700);}
+  .bc-count{margin-top:7px;padding:5px 9px;background:var(--stone-50);border-radius:6px;font-family:sans-serif;font-size:.79rem;display:flex;align-items:center;gap:6px;}
+  .bc-count .cnt{font-size:1.15rem;font-weight:700;color:var(--terra);}
+  .bc-nights{font-family:sans-serif;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;}
+  .long-stay .bc-nights{background:var(--terra-p);color:var(--terra);}
+  .short-stay .bc-nights{background:var(--gold-p);color:#9a7a1a;}
+  .rest .bc-nights{background:var(--olive-p);color:var(--olive);}
+
+  /* Map */
+  #map{height:calc(100vh - 128px);border-radius:8px;border:1px solid var(--stone-200);}
+
+  /* Locations */
+  .loc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:9px;}
+  .loc-card{background:white;border:1px solid var(--stone-200);border-radius:8px;padding:11px 13px;box-shadow:var(--shadow);}
+  .loc-card h4{font-size:.86rem;font-weight:600;margin-bottom:3px;}
+  .loc-card .lm{font-family:sans-serif;font-size:.73rem;color:var(--stone-500);margin-bottom:5px;}
+  .loc-card .ld{font-family:sans-serif;font-size:.77rem;color:var(--stone-600);line-height:1.43;}
+  .section-label{grid-column:1/-1;font-family:sans-serif;font-size:.77rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--stone-500);padding:4px 0 6px;}
+
+  /* Loading */
+  #loading{position:fixed;inset:0;background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;font-family:sans-serif;}
+  #loading .spinner{width:40px;height:40px;border:3px solid var(--stone-200);border-top-color:var(--terra);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loading p{color:var(--stone-500);font-size:.88rem;}
+
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-track{background:var(--stone-100);}
+  ::-webkit-scrollbar-thumb{background:var(--stone-300);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Loading property data…</p>
+</div>
+
+<header>
+  <span class="flag">🇮🇹</span>
+  <div>
+    <h1>Italy Property Hunt Planner</h1>
+    <div class="subtitle">627 properties · 4 itineraries · constraint tracker · interactive map</div>
+  </div>
+  <div class="trip-badge" id="trip-badge">Loading…</div>
+</header>
+
+<div class="app-body">
+  <aside class="sidebar">
+    <div class="widget">
+      <div class="widget-header">Trip Parameters</div>
+      <div class="widget-body" id="trip-params"></div>
+    </div>
+    <div class="widget">
+      <div class="widget-header">🚗 Car Swaps</div>
+      <div class="widget-body" id="car-swaps"></div>
+    </div>
+    <div class="widget">
+      <div class="widget-header">📅 Hard Commitments</div>
+      <div class="widget-body" id="commitments"></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="properties">Properties</button>
+      <button class="tab-btn" data-tab="itinerary">Itineraries</button>
+      <button class="tab-btn" data-tab="map">Map</button>
+      <button class="tab-btn" data-tab="locations">Locations</button>
+    </div>
+    <div class="tab-panel active" id="tab-properties">
+      <div class="filter-bar">
+        <input type="text" id="search" placeholder="Search town, region, province…" oninput="filterProps()"/>
+        <select id="filter-region" onchange="filterProps()"><option value="">All regions</option></select>
+        <select id="filter-province" onchange="filterProps()"><option value="">All provinces</option></select>
+        <select id="filter-realtor" onchange="filterProps()"><option value="">All realtors</option></select>
+        <select id="sort-by" onchange="filterProps()">
+          <option value="town">Sort: Town A–Z</option>
+          <option value="price_asc">Price ↑</option>
+          <option value="price_desc">Price ↓</option>
+          <option value="size_desc">Size ↓</option>
+          <option value="rooms_desc">Rooms ↓</option>
+        </select>
+        <span class="results-count" id="results-count"></span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th>Town</th><th>Province</th><th>Region</th>
+            <th>Price (€)</th><th>Rooms</th><th>Size m²</th><th>Realtor</th><th>ID</th>
+          </tr></thead>
+          <tbody id="prop-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tab-panel" id="tab-itinerary">
+      <div class="itin-sel" id="itin-sel"></div>
+      <div id="itin-content"></div>
+    </div>
+    <div class="tab-panel" id="tab-map">
+      <div id="map"></div>
+    </div>
+    <div class="tab-panel" id="tab-locations">
+      <div class="loc-grid" id="loc-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Global state ──────────────────────────────────────────────────
+let DATA = {};
+let activeItinIdx = 0;
+let mapInited = false;
+
+// ── Utilities ─────────────────────────────────────────────────────
+const haversineKm = (lat1,lon1,lat2,lon2) => {
+  const R=6371, dL=(lat2-lat1)*Math.PI/180, dN=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dN/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+};
+const parsePrice = s => parseInt((s||'').replace(/[^0-9]/g,''))||0;
+const fmtPrice = s => { const n=parsePrice(s); return n?'€'+n.toLocaleString('en-US'):s||'—'; };
+
+function propCoord(town) {
+  const c = DATA.coordinates[town];
+  if (c) return c;
+  const k = Object.keys(DATA.coordinates).find(key => key.split(' ')[0]===town.split(' ')[0]);
+  return k ? DATA.coordinates[k] : null;
+}
+
+function countPropsInRadius(baseName, radiusKm) {
+  const bc = DATA.coordinates[baseName];
+  if (!bc || !radiusKm) return null;
+  return DATA.properties.filter(p => {
+    const tc = propCoord(p.town);
+    return tc && haversineKm(bc[0],bc[1],tc[0],tc[1]) <= radiusKm;
+  }).length;
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────
+function renderSidebar() {
+  const tp = DATA.constraints.trip_parameters;
+  const start = new Date(tp.start_date);
+  const end = new Date(start); end.setDate(end.getDate()+tp.total_nights);
+  const today = new Date();
+  const days = Math.ceil((start-today)/86400000);
+  document.getElementById('trip-badge').textContent =
+    days>0 ? `Departs in ${days} days` : days===0 ? 'Trip starts today!' : 'Trip in progress';
+
+  document.getElementById('trip-params').innerHTML = [
+    ['Start',tp.start_date],['End',end.toISOString().slice(0,10)],
+    ['Duration',tp.total_nights+' nights'],
+    ['Long-stay target',tp.long_stay_target_nights+'+ nights (≥'+tp.long_stay_min_bases+' bases)'],
+    ['Max driving/day',tp.max_daily_driving_hours+'h'],
+    ['Default radius',tp.default_search_radius_km+' km'],
+  ].map(([l,v])=>`<div class="trip-stat"><span class="lbl">${l}</span><span class="val">${v}</span></div>`).join('');
+
+  document.getElementById('car-swaps').innerHTML = DATA.constraints.car_swaps
+    .map(s=>`<div class="c-item"><div class="c-date">Day ${s.day} · ${s.date}</div><div class="c-loc">📍 ${s.location}</div><div class="c-desc">${s.description}</div></div>`).join('');
+
+  document.getElementById('commitments').innerHTML = DATA.constraints.hard_date_commitments
+    .map(c=>`<div class="c-item"><div class="c-date">${c.date_range}</div><div class="c-loc">${c.purpose}</div>${c.location_recommendation?`<div class="c-desc">${c.location_recommendation}</div>`:''}</div>`).join('');
+}
+
+// ── Properties ────────────────────────────────────────────────────
+function initPropsFilters() {
+  const regions  = [...new Set(DATA.properties.map(p=>p.region).filter(Boolean))].sort();
+  const provs    = [...new Set(DATA.properties.map(p=>p.province).filter(Boolean))].sort();
+  const realtors = [...new Set(DATA.properties.map(p=>p.realtor).filter(Boolean))].sort();
+  const add = (id,items) => { const s=document.getElementById(id); items.forEach(v=>s.innerHTML+=`<option>${v}</option>`); };
+  add('filter-region',regions); add('filter-province',provs); add('filter-realtor',realtors);
+  // Update tab label
+  document.querySelector('[data-tab="properties"]').textContent=`Properties (${DATA.properties.length})`;
+  filterProps();
+}
+
+function filterProps() {
+  const q  = document.getElementById('search').value.toLowerCase();
+  const rg = document.getElementById('filter-region').value;
+  const pv = document.getElementById('filter-province').value;
+  const rt = document.getElementById('filter-realtor').value;
+  const so = document.getElementById('sort-by').value;
+
+  let list = DATA.properties.filter(p => {
+    if (rg && p.region!==rg) return false;
+    if (pv && p.province!==pv) return false;
+    if (rt && p.realtor!==rt) return false;
+    if (q && !(p.town+p.province+p.region+p.realtor+p.id).toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const sorts = {
+    town:(a,b)=>a.town.localeCompare(b.town),
+    price_asc:(a,b)=>parsePrice(a.price)-parsePrice(b.price),
+    price_desc:(a,b)=>parsePrice(b.price)-parsePrice(a.price),
+    size_desc:(a,b)=>(parseInt(b.size)||0)-(parseInt(a.size)||0),
+    rooms_desc:(a,b)=>(parseInt(b.rooms)||0)-(parseInt(a.rooms)||0),
+  };
+  list.sort(sorts[so]||sorts.town);
+
+  document.getElementById('results-count').textContent = `${list.length} of ${DATA.properties.length}`;
+  const tbody = document.getElementById('prop-tbody');
+  tbody.innerHTML = list.length===0
+    ? `<tr><td colspan="8" style="text-align:center;padding:22px;color:var(--stone-400);font-family:sans-serif">No properties match</td></tr>`
+    : list.map(p=>`<tr>
+        <td class="town">${p.town}</td>
+        <td>${p.province||'—'}</td>
+        <td style="color:var(--stone-400);font-size:.75rem">${p.region||'—'}</td>
+        <td class="price">${fmtPrice(p.price)}</td>
+        <td style="text-align:center">${p.rooms||'—'}</td>
+        <td style="text-align:center">${p.size?p.size+' m²':'—'}</td>
+        <td style="color:var(--stone-500)">${p.realtor||'—'}</td>
+        <td class="id-c">${p.id}</td>
+      </tr>`).join('');
+}
+
+// ── Itinerary ─────────────────────────────────────────────────────
+function initItinerary() {
+  const sel = document.getElementById('itin-sel');
+  DATA.itineraries.forEach((it,i)=>{
+    const b=document.createElement('button');
+    b.className='itin-btn'+(i===0?' active':'');
+    b.textContent='Itinerary '+it.id.replace('itinerary_','').toUpperCase();
+    b.title=it.name; b.onclick=()=>selectItin(i);
+    sel.appendChild(b);
+  });
+  renderItin(0);
+}
+
+function selectItin(idx) {
+  activeItinIdx=idx;
+  document.querySelectorAll('.itin-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  renderItin(idx);
+}
+
+function renderItin(idx) {
+  const it = DATA.itineraries[idx];
+  const tp = DATA.constraints.trip_parameters;
+  const startDate = new Date(tp.start_date);
+  let day=0;
+  const bases = it.bases.map(b=>({...b,dayStart:day,_d:(day+=b.nights,0)}));
+
+  const longBases = bases.filter(b=>{ const l=DATA.locations.find(l=>l.name===b.name); return l&&l.type==='long_stay'; });
+  const longNights = longBases.reduce((s,b)=>s+b.nights,0);
+  const totalProps = bases.reduce((s,b)=>{ const c=b.radius>0?countPropsInRadius(b.name,b.radius):0; return s+(c||0); },0);
+
+  let html=`<div class="itin-meta"><h3>${it.name}</h3><p>${it.description}</p></div>
+    <div class="itin-summary">
+      <div class="stat"><span class="n">${it.bases.length}</span><span class="l">Bases</span></div>
+      <div class="stat"><span class="n">${longBases.length}</span><span class="l">Long Stays</span></div>
+      <div class="stat"><span class="n">${longNights}</span><span class="l">Long-Stay Nights</span></div>
+      <div class="stat"><span class="n">${totalProps}</span><span class="l">Properties In Range</span></div>
+    </div><div class="bases-grid">`;
+
+  bases.forEach(b=>{
+    const locData = DATA.locations.find(l=>l.name===b.name);
+    const isRest = b.name.toLowerCase().includes('vacation')||b.name.toLowerCase().includes('rest');
+    const locType = isRest?'rest':(locData?locData.type:'short_stay');
+    const cardClass = locType==='long_stay'?'long-stay':locType==='rest'?'rest':'short-stay';
+    const badgeClass = locType==='long_stay'?'badge-long':locType==='rest'?'badge-rest':'badge-short';
+    const badgeLabel = locType==='long_stay'?'Long Stay':locType==='rest'?'Rest':'Short Stay';
+    const arr = new Date(startDate); arr.setDate(arr.getDate()+b.dayStart);
+    const dateStr = arr.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const propCount = b.radius>0?countPropsInRadius(b.name,b.radius):null;
+
+    html+=`<div class="base-card ${cardClass}">
+      <div class="bc-header">
+        <div class="bc-name">${b.name}</div>
+        <span class="bc-nights">${b.nights>0?b.nights+'n':'Transit'}</span>
+      </div>
+      <div class="bc-body">
+        <div class="bc-stat"><span class="badge ${badgeClass}">${badgeLabel}</span></div>
+        <div class="bc-stat">📅 Arrives <strong>${dateStr}</strong> · Day ${b.dayStart+1}</div>
+        ${b.radius>0?`<div class="bc-stat">🔍 Radius: <strong>${b.radius} km</strong></div>`:''}
+        ${locData?`<div class="bc-stat" style="margin-top:5px;font-size:.73rem;color:var(--stone-400);line-height:1.4">${locData.description}</div>`:''}
+        ${propCount!==null?`<div class="bc-count"><span class="cnt">${propCount}</span><span style="color:var(--stone-500)">props within ${b.radius}km</span></div>`:''}
+      </div></div>`;
+  });
+  html+='</div>';
+  document.getElementById('itin-content').innerHTML=html;
+}
+
+// ── Map ───────────────────────────────────────────────────────────
+function initMap() {
+  if (mapInited) return; mapInited=true;
+  const map = L.map('map').setView([42.8,12.5],6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(map);
+
+  const it = DATA.itineraries[activeItinIdx];
+  const colors = {long_stay:getComputedStyle(document.documentElement).getPropertyValue('--terra').trim()||'#b5533c',short_stay:'#c9a84c',rest:'#7a8c5a'};
+
+  it.bases.forEach(b=>{
+    const coords=DATA.coordinates[b.name]; if(!coords) return;
+    const locData=DATA.locations.find(l=>l.name===b.name);
+    const isRest=b.name.toLowerCase().includes('vacation')||b.name.toLowerCase().includes('rest');
+    const locType=isRest?'rest':(locData?locData.type:'short_stay');
+    const color=colors[locType]||'#78716c';
+
+    if (b.radius>0) L.circle([coords[0],coords[1]],{radius:b.radius*1000,color,fillColor:color,fillOpacity:.06,weight:1.5,dashArray:'4 4'}).addTo(map);
+
+    const propCount=b.radius>0?countPropsInRadius(b.name,b.radius):null;
+    const icon=L.divIcon({html:`<div style="background:${color};color:white;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:sans-serif;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.3)">${b.nights||'✈'}</div>`,className:'',iconSize:[26,26],iconAnchor:[13,13]});
+    L.marker([coords[0],coords[1]],{icon}).bindPopup(`<b>${b.name}</b><br>${b.nights} nights${b.radius>0?` · ${b.radius}km radius`:''}${propCount!==null?`<br><b>${propCount} properties in range</b>`:''}`).addTo(map);
+  });
+
+  DATA.constraints.car_swaps.forEach(s=>{
+    const coords=DATA.coordinates[s.location]; if(!coords) return;
+    const icon=L.divIcon({html:`<div style="background:#374151;color:white;border-radius:4px;padding:2px 6px;font-size:9px;font-family:sans-serif;border:1px solid white;box-shadow:0 1px 3px rgba(0,0,0,.3);white-space:nowrap">🚗 Swap</div>`,className:'',iconSize:[58,20],iconAnchor:[29,10]});
+    L.marker([coords[0],coords[1]],{icon}).bindPopup(`<b>${s.location}</b><br>Day ${s.day} · ${s.date}<br>${s.description}`).addTo(map);
+  });
+
+  setTimeout(()=>map.invalidateSize(),150);
+}
+
+// ── Locations ─────────────────────────────────────────────────────
+function initLocations() {
+  const grid=document.getElementById('loc-grid');
+  const long=DATA.locations.filter(l=>l.type==='long_stay');
+  const short=DATA.locations.filter(l=>l.type==='short_stay');
+  const cards=locs=>locs.map(l=>`<div class="loc-card">
+    <h4>${l.name}</h4>
+    <div class="lm">${l.province}, ${l.region} · <span class="badge ${l.type==='long_stay'?'badge-long':'badge-short'}">${l.type==='long_stay'?'Long Stay':'Short Stay'}</span></div>
+    <div class="ld">${l.description}</div>
+  </div>`).join('');
+  grid.innerHTML=`<div class="section-label">Long-Stay Bases (${long.length})</div>${cards(long)}<div class="section-label" style="padding-top:10px">Short-Stay Bases (${short.length})</div>${cards(short)}`;
+}
+
+// ── Tab switching ─────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('tab-'+this.dataset.tab).classList.add('active');
+    if (this.dataset.tab==='map') initMap();
+  });
+});
+
+// ── Bootstrap ─────────────────────────────────────────────────────
+async function boot() {
+  try {
+    const [properties, locations, itineraries, constraints, coordinates] = await Promise.all([
+      fetch('./data/properties.json').then(r=>r.json()),
+      fetch('./data/locations.json').then(r=>r.json()),
+      fetch('./data/itineraries.json').then(r=>r.json()),
+      fetch('./data/constraints.json').then(r=>r.json()),
+      fetch('./data/coordinates.json').then(r=>r.json()),
+    ]);
+    DATA = { properties, locations, itineraries, constraints, coordinates };
+    renderSidebar();
+    initPropsFilters();
+    initItinerary();
+    initLocations();
+    document.getElementById('loading').style.display='none';
+  } catch(err) {
+    document.getElementById('loading').innerHTML=`<p style="color:#b5533c;font-family:sans-serif;padding:24px">Failed to load data: ${err.message}<br><br>Serve this directory with a local HTTP server,<br>e.g. <code>python3 -m http.server 8080</code></p>`;
+  }
+}
+boot();
+</script>
+</body>
+</html>
